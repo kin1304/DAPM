@@ -3,6 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import io
 
+from TwoPhase import TwoPhase
+
+
 st.title('Ứng dụng Trực quan hóa Dữ liệu')
 
 # Bước 1: Tải lên tệp TXT
@@ -30,7 +33,7 @@ if uploaded_file is not None:
 
     # Bước 2: Chọn các thuật toán cần chạy
     if selected_algorithm == 'Two-Phase':
-        algorithm_instance = TwoPhase() 
+        algorithm_instance = TwoPhase(uploaded_file) 
     elif selected_algorithm == 'HUI-Miner':
         algorithm_instance = HUIMiner()
     elif selected_algorithm == 'EFIM':
@@ -41,6 +44,18 @@ if uploaded_file is not None:
         algorithm_instance = HUSSpan()
     elif selected_algorithm == 'PrefixSpan':
         algorithm_instance = PrefixSpan()
+
+    if algorithm_instance:
+        st.write("Đang chạy thuật toán...")
+        high_utility_itemsets = algorithm_instance.run()
+
+    if high_utility_itemsets:
+        st.write("Kết quả các tập mẫu tiện ích cao:")
+        for itemset, support, utility in high_utility_itemsets:
+            itemset_str = ' '.join(map(str, itemset))
+            st.write(f"{itemset_str} #SUP: {support:.1f} #UTIL: {utility}")
+    else:
+        st.write("Không tìm thấy tập mẫu tiện ích cao nào.")
 
     # Bước 3: Vẽ biểu đồ scatter
     fig, ax = plt.subplots()
