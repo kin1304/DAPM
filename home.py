@@ -2,23 +2,16 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import io
-
+import time
 from TwoPhase import TwoPhase
-
+from Helpers.LoadFile import LoadFileCSV as file_csv
 
 st.title('Ứng dụng Trực quan hóa Dữ liệu')
+col1, col2, col3 = st.columns(2)
 
 # Bước 1: Tải lên tệp TXT
-uploaded_file = st.file_uploader("Chọn tệp TXT để tải lên", type="txt")
-
-if uploaded_file is not None:
-    # Giả sử tệp TXT có định dạng giống CSV với dấu phân cách là tab hoặc dấu phẩy
-    # Bạn có thể điều chỉnh tham số 'delimiter' phù hợp
-    df = pd.read_csv(uploaded_file, delimiter='\t')  # Hoặc delimiter=',' nếu cần
-
-    st.write("Xem trước dữ liệu:")
-    st.dataframe(df.head())
-
+with col1:
+    uploaded_file = file_csv.load_file_csv()
     # Bổ sung combobox để chọn nhóm bài toán
     problem_group = st.selectbox('Chọn nhóm bài toán', ['High-Utilities Itemsets', 'High-Utilities Sequential'])
 
@@ -34,23 +27,27 @@ if uploaded_file is not None:
     # Bước 2: Chọn các thuật toán cần chạy
     if selected_algorithm == 'Two-Phase':
         algorithm_instance = TwoPhase(uploaded_file) 
-    elif selected_algorithm == 'HUI-Miner':
-        algorithm_instance = HUIMiner()
-    elif selected_algorithm == 'EFIM':
-        algorithm_instance = EFIM()
-    elif selected_algorithm == 'USpan':
-        algorithm_instance = USpan()
-    elif selected_algorithm == 'HUS-Span':
-        algorithm_instance = HUSSpan()
-    elif selected_algorithm == 'PrefixSpan':
-        algorithm_instance = PrefixSpan()
+    # elif selected_algorithm == 'HUI-Miner':
+    #     algorithm_instance = HUIMiner()
+    # elif selected_algorithm == 'EFIM':
+    #     algorithm_instance = EFIM()
+    # elif selected_algorithm == 'USpan':
+    #     algorithm_instance = USpan()
+    # elif selected_algorithm == 'HUS-Span':
+    #     algorithm_instance = HUSSpan()
+    # elif selected_algorithm == 'PrefixSpan':
+    #     algorithm_instance = PrefixSpan()
 
-    if algorithm_instance:
-        st.write("Đang chạy thuật toán...")
-        high_utility_itemsets = algorithm_instance.run()
+    placeholder = st.empty()
+    high_utility_itemsets = []
+    if(len(high_utility_itemsets) == 0):
+        if algorithm_instance:
+            placeholder.write("Đang chạy thuật toán...")
+            high_utility_itemsets = algorithm_instance.run()
+            time.sleep(5)
 
     if high_utility_itemsets:
-        st.write("Kết quả các tập mẫu tiện ích cao:")
+        placeholder.write("Kết quả các tập mẫu tiện ích cao:")
         for itemset, support, utility in high_utility_itemsets:
             itemset_str = ' '.join(map(str, itemset))
             st.write(f"{itemset_str} #SUP: {support:.1f} #UTIL: {utility}")
@@ -58,12 +55,12 @@ if uploaded_file is not None:
         st.write("Không tìm thấy tập mẫu tiện ích cao nào.")
 
     # Bước 3: Vẽ biểu đồ scatter
-    fig, ax = plt.subplots()
-    ax.scatter(df[x_column], df[y_column])
-    ax.set_xlabel(x_column)
-    ax.set_ylabel(y_column)
-    ax.set_title(f'Biểu đồ Scatter của {y_column} so với {x_column}')
-    st.pyplot(fig)
+    # fig, ax = plt.subplots()
+    # ax.scatter(df[x_column], df[y_column])
+    # ax.set_xlabel(x_column)
+    # ax.set_ylabel(y_column)
+    # ax.set_title(f'Biểu đồ Scatter của {y_column} so với {x_column}')
+    # st.pyplot(fig)
 
     # Bước 4: Xuất kết quả
     output_format = st.radio("Chọn định dạng xuất", ('CSV', 'Excel'))
