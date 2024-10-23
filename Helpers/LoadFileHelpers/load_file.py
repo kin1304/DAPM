@@ -35,23 +35,12 @@ def load_file_csv_txt() -> pd.DataFrame:
             df = pd.read_csv(uploaded_file, delimiter=choose_delimiter, header=None)
         else:
             df = pd.read_csv(uploaded_file, delimiter=choose_delimiter)
-        col1, col2, col3 = st.columns([1, 2, 1])  # Cột giữa sẽ rộng hơn
-        with col1:
-            st.write("")  # Cột bên trái để trống
-        with col2:
-            st.write("Xem trước dữ liệu:")
-            st.dataframe(df, width=700, height=300)
-        with col3:
-            st.write("")  # Cột bên phải để trống
+
+        st.write("Xem trước dữ liệu:")
+        st.dataframe(df, width=1400, height=300)
         df_after = fill_column(df)
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col1:
-            st.write("")  # Cột bên trái để trống
-        with col2:
-            st.write("Dữ liệu sau khi điền tên cột")
-            st.dataframe(df_after, width=700, height=300)
-        with col3:
-            st.write("")  # Cột bên phải để trống
+        st.write("Xem trước dữ liệu:")
+        st.dataframe(df_after, width=1400, height=300)
         return df_after
 
 
