@@ -2,6 +2,7 @@ import itertools
 from collections import defaultdict
 import pandas as pd
 
+
 class TwoPhase:
     def __init__(self, uploaded_file):
         """
@@ -131,7 +132,7 @@ class TwoPhase:
                 itemset_str = ' '.join(map(str, itemset))
                 file.write(f"{itemset_str} #SUP: {support:.1f} #UTIL: {utility}\n")
 
-    def run(self):
+    def run(self) -> list:
         """
         Chạy thuật toán Two-Phase và in ra kết quả.
         """
@@ -141,5 +142,7 @@ class TwoPhase:
             for itemset, support, utility in high_utility_itemsets:
                 itemset_str = ' '.join(map(str, itemset))
                 print(f"{itemset_str} #SUP: {support:.1f} #UTIL: {utility}")
+            return high_utility_itemsets
         else:
             print("Dữ liệu chưa được tải thành công. Không thể chạy thuật toán.")
+            return []
