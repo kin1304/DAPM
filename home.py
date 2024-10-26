@@ -3,13 +3,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import io
 import time
-from TwoPhase import TwoPhase
+#from TwoPhase import TwoPhase
 from Helpers.LoadFileHelpers import load_file as lf
+from Helpers.AlgorithmHelpers import TwoPhase
 
 st.title('Ứng dụng Trực quan hóa Dữ liệu')
 
 # Bước 1: Tải lên tệp
 choose_tof = st.radio("Chọn định dạng file tải lên", ('TXT hoặc CSV', 'Excel'))
+data = []
 if choose_tof == 'TXT hoặc CSV':
     data = lf.load_file_csv_txt()
 elif choose_tof == 'Excel':
@@ -30,7 +32,7 @@ st.write(f'Thuật toán đã chọn: {selected_algorithm}')
 
 # Bước 2: Chọn các thuật toán cần chạy
 if selected_algorithm == 'Two-Phase':
-    algorithm_instance = TwoPhase(data)
+    algorithm_instance = TwoPhase.TwoPhase(data)
 # elif selected_algorithm == 'HUI-Miner':
 #     algorithm_instance = HUIMiner()
 # elif selected_algorithm == 'EFIM':
