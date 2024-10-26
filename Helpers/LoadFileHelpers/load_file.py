@@ -55,6 +55,8 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
     utilities = ""
     quantities = ""
     unit_price = ""
+    user = ""
+    transaction = ""
     total_utilities = ""
     df = pd.DataFrame({})
     if not dataframe.empty:
@@ -71,7 +73,7 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
                 pass
             else:
                 columns.remove(utilities)
-        if len(columns):
+        if len(columns) > 0:
             total_utilities = st.selectbox("Chọn cột chứa tổng hữu ích của đơn hàng", columns, placeholder=" ")
             if total_utilities == "":
                 pass
@@ -85,7 +87,25 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
                 columns.remove(quantities)
         if len(columns) > 0:
             unit_price = st.selectbox("Chọn cột chứa đơn giá của sản phẩm", columns, placeholder=" ")
-        if (items != "" and utilities != "") or (items != "" and quantities != "" and unit_price != ""):
+            if unit_price == "":
+                pass
+            else:
+                columns.remove(unit_price)
+        if len(columns) > 0:
+            user = st.selectbox("Chọn cột chứa mã người dùng", columns, placeholder=" ")
+            if user == "":
+                pass
+            else:
+                columns.remove(user)
+        if len(columns) > 0:
+            transaction = st.selectbox("Chọn cột chứa mã hóa đơn", columns, placeholder=" ")
+            if transaction == "":
+                pass
+            else:
+                columns.remove(transaction)
+
+
+        if (items != "" and utilities != "") or (items != "" and quantities != "" and unit_price != "" and user != "" and transaction != ""):
             df["items"] = dataframe[items]
             if utilities != "":
                 df["utilities"] = dataframe[utilities]
@@ -93,8 +113,10 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
                 df["quantities"] = dataframe[quantities]
             if unit_price != "":
                 df["unit_price"] = dataframe[unit_price]
-            if total_utilities != "":
-                df["total_utilities"] = dataframe[total_utilities]
+            if user != "":
+                df["user"] = dataframe[user]
+            if transaction != "":
+                df["transaction"] = dataframe[transaction]
         else:
             st.write("Dữ liệu không phù hợps")
     return df
