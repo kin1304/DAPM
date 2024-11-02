@@ -1,11 +1,13 @@
 import pandas as pd
 import numpy as np
+import itertools
+from collections import defaultdict
 
 class TwoPhase:
     def __init__(self, df, threshold=30):
         self.df = pd.DataFrame(data=df)
         self.threshold = threshold
-        self.grouped_data = self.fit()
+        self.items, self.utilities = self.fit()
 
     def fit(self):
         """
@@ -19,9 +21,6 @@ class TwoPhase:
             raise TypeError("The input is not a pandas DataFrame.")
         self.df = self.df.copy()
 
-        # Remove the unnamed index column as it is not needed
-        #self.df = self.df.drop(columns=['Unnamed: 0'])
-
         # Calculate utilities for each item
         self.df['utility'] = self.df['quantities'] * self.df['unit_price']
 
@@ -33,8 +32,10 @@ class TwoPhase:
 
         # Rename columns to match user’s request
         grouped_data = grouped_data.rename(columns={'items': 'items', 'utility': 'utilities'})
-
-        return grouped_data
+        items = grouped_data['items']
+        utilities = grouped_data['utilities']
+        return items, utilities
 
     def run(self):
-        print(self.grouped_data[:5])
+        print(self.items)
+        print(self.utilities)
