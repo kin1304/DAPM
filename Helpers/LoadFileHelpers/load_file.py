@@ -54,9 +54,12 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
     try:
         data = pd.DataFrame()
         data['name'] = dataframe['name']
-        data['utilities'] = dataframe['quantity'] * dataframe['price']
-        data['user'] = dataframe['user']
-        data['transaction'] = dataframe['transaction']
+        data['utilities'] = (dataframe['quantity'] * dataframe['price']).astype(str)
+        data['utilities'] = data['utilities'] + ' '
+        data['user'] = dataframe['user'].astype(str)
+        data['transaction'] = dataframe['transaction'].astype(str)
+        data['user'] = data['user'] + ' '
+        data['transaction'] = data['transaction'] + ' '
         return data
     except Exception as e:
         print(e)
