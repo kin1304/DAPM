@@ -55,6 +55,8 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
     utilities = ""
     quantities = ""
     unit_price = ""
+    user = ""
+    transaction = ""
     total_utilities = ""
     user = ""
     transaction = ""
@@ -73,7 +75,7 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
                 pass
             else:
                 columns.remove(utilities)
-        if len(columns):
+        if len(columns) > 0:
             total_utilities = st.selectbox("Chọn cột chứa tổng hữu ích của đơn hàng", columns, placeholder=" ")
             if total_utilities == "":
                 pass
@@ -92,7 +94,7 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
             else:
                 columns.remove(unit_price)
         if len(columns) > 0:
-            user = st.selectbox("Chọn chột chứa mã user", columns, placeholder=" ")
+            user = st.selectbox("Chọn cột chứa mã người dùng", columns, placeholder=" ")
             if user == "":
                 pass
             else:

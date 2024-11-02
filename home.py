@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 import time
+
 from Helpers.AlgorithmHelpers.TwoPhase import TwoPhase
 from Helpers.LoadFileHelpers import load_file as lf
 from Helpers.LoadFileHelpers import group_by as gr
@@ -35,7 +36,7 @@ st.write(f'Thuật toán đã chọn: {selected_algorithm}')
 
 # Bước 2: Chọn các thuật toán cần chạy
 if selected_algorithm == 'Two-Phase':
-    algorithm_instance = TwoPhase(data)
+    algorithm_instance = TwoPhase.TwoPhase(data)
 # elif selected_algorithm == 'HUI-Miner':
 #     algorithm_instance = HUIMiner()
 # elif selected_algorithm == 'EFIM':
