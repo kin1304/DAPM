@@ -38,3 +38,4 @@ class TwoPhase:
 
     def run(self):
         print(self.grouped_data[:5])
+

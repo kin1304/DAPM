@@ -39,15 +39,15 @@ def load_file_csv_txt() -> pd.DataFrame:
                 df = pd.read_csv(uploaded_file, delimiter=choose_delimiter, header=None)
             else:
                 df = pd.read_csv(uploaded_file, delimiter=choose_delimiter)
-
             st.write("Xem trước dữ liệu:")
             st.dataframe(df, width=1400, height=300)
             df_after = fill_column(df)
-            st.write("Xem trước dữ liệu:")
+            st.write("Dữ liệu sau khi chọn cột:")
             st.dataframe(df_after, width=1400, height=300)
             return df_after
         except pd.errors.ParserError as e:
             st.markdown("<span style='color:red'>Chọn dấu ngăn không phù hợp</span>", unsafe_allow_html=True)
+            return pd.DataFrame({})
 
 
 def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -58,6 +58,8 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
     user = ""
     transaction = ""
     total_utilities = ""
+    user = ""
+    transaction = ""
     df = pd.DataFrame({})
     if not dataframe.empty:
         columns = [""] + list(dataframe.columns)
@@ -98,25 +100,21 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
             else:
                 columns.remove(user)
         if len(columns) > 0:
-            transaction = st.selectbox("Chọn cột chứa mã hóa đơn", columns, placeholder=" ")
-            if transaction == "":
-                pass
-            else:
-                columns.remove(transaction)
-
-
-        if (items != "" and utilities != "") or (items != "" and quantities != "" and unit_price != "" and user != "" and transaction != ""):
+            transaction = st.selectbox("Chọn cột chứa mã giao dịch", columns, placeholder=" ")
+        if (items != "" and utilities != "") or (items != "" and quantities != "" and unit_price != ""):
             df["items"] = dataframe[items]
             if utilities != "":
-                df["utilities"] = dataframe[utilities]
+                df["utilities"] = dataframe[utilities].astype(str) + " "
             if quantities != "":
-                df["quantities"] = dataframe[quantities]
+                df["quantities"] = dataframe[quantities].astype(str) + " "
             if unit_price != "":
-                df["unit_price"] = dataframe[unit_price]
+                df["unit_price"] = dataframe[unit_price].astype(str) + " "
+            if total_utilities != "":
+                df["total_utilities"] = dataframe[total_utilities].astype(str) + " "
             if user != "":
-                df["user"] = dataframe[user]
+                df["user"] = dataframe[user].astype(str) + " "
             if transaction != "":
-                df["transaction"] = dataframe[transaction]
+                df["transaction"] = dataframe[transaction].astype(str) + " "
         else:
             st.write("Dữ liệu không phù hợps")
     return df

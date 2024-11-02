@@ -1,31 +1,35 @@
-import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import io
+import streamlit as st
 import time
-#from TwoPhase import TwoPhase
+
+from Helpers.AlgorithmHelpers.TwoPhase import TwoPhase
 from Helpers.LoadFileHelpers import load_file as lf
-from Helpers.AlgorithmHelpers import TwoPhase
+from Helpers.LoadFileHelpers import group_by as gr
 
 st.title('Ứng dụng Trực quan hóa Dữ liệu')
 
 # Bước 1: Tải lên tệp
 choose_tof = st.radio("Chọn định dạng file tải lên", ('TXT hoặc CSV', 'Excel'))
-data = []
+data = pd.DataFrame()
 if choose_tof == 'TXT hoặc CSV':
     data = lf.load_file_csv_txt()
 elif choose_tof == 'Excel':
     data = lf.load_file_excel()
 
-    # Bổ sung combobox để chọn nhóm bài toán
 
+if not pd.DataFrame(data).empty:
+    data = gr.main(data)
+
+# Bổ sung combobox để chọn nhóm bài toán
 problem_group = st.selectbox('Chọn nhóm bài toán', ['High-Utilities Itemsets', 'High-Utilities Sequential'])
 
 # Bổ sung combobox để chọn thuật toán tương ứng với nhóm bài toán đã chọn
+selected_algorithm = ""
 if problem_group == 'High-Utilities Itemsets':
     selected_algorithm = st.selectbox('Chọn một thuật toán để chạy', ['Two-Phase', 'HUI-Miner', 'EFIM'])
 elif problem_group == 'High-Utilities Sequential':
     selected_algorithm = st.selectbox('Chọn một thuật toán để chạy', ['USpan', 'HUS-Span', 'PrefixSpan'])
+
 
 st.write(f'Nhóm bài toán đã chọn: {problem_group}')
 st.write(f'Thuật toán đã chọn: {selected_algorithm}')
@@ -46,7 +50,7 @@ if selected_algorithm == 'Two-Phase':
 
 placeholder = st.empty()
 high_utility_itemsets = []
-if (len(high_utility_itemsets) == 0):
+if len(high_utility_itemsets) == 0:
     if algorithm_instance:
         placeholder.write("Đang chạy thuật toán...")
         high_utility_itemsets = algorithm_instance.run()
