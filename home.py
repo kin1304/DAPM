@@ -5,24 +5,10 @@ import io
 import time
 #from TwoPhase import TwoPhase
 from Helpers.LoadFileHelpers import load_file as lf
+from Helpers.LoadFileHelpers import group_by as gr
 from Helpers.AlgorithmHelpers import TwoPhase
 
 st.title('Ứng dụng Trực quan hóa Dữ liệu')
-
-<<<<<<< Updated upstream
-# Bước 1: Tải lên tệp
-choose_tof = st.radio("Chọn định dạng file tải lên", ('TXT hoặc CSV', 'Excel'))
-data = []
-if choose_tof == 'TXT hoặc CSV':
-    data = lf.load_file_csv_txt()
-elif choose_tof == 'Excel':
-    data = lf.load_file_excel()
-
-    # Bổ sung combobox để chọn nhóm bài toán
-
-=======
-# Bổ sung combobox để chọn nhóm bài toán
->>>>>>> Stashed changes
 problem_group = st.selectbox('Chọn nhóm bài toán', ['High-Utilities Itemsets', 'High-Utilities Sequential'])
 
 # Bổ sung combobox để chọn thuật toán tương ứng với nhóm bài toán đã chọn
@@ -31,10 +17,6 @@ if problem_group == 'High-Utilities Itemsets':
 elif problem_group == 'High-Utilities Sequential':
     selected_algorithm = st.selectbox('Chọn một thuật toán để chạy', ['USpan', 'HUS-Span', 'PrefixSpan'])
 
-<<<<<<< Updated upstream
-st.write(f'Nhóm bài toán đã chọn: {problem_group}')
-st.write(f'Thuật toán đã chọn: {selected_algorithm}')
-=======
 threshold = st.number_input("Nhập giá trị hữu ích bạn muốn khai thác: ", value=30)
 
 # Bước 1: Tải lên tệp
@@ -50,7 +32,6 @@ if not pd.DataFrame(data).empty:
         data = gr.main(data, problem='HUI')
     if problem_group == 'High-Utilities Sequential':
         data = gr.main(data, problem='HUS')
->>>>>>> Stashed changes
 
 # Bước 2: Chọn các thuật toán cần chạy
 if selected_algorithm == 'Two-Phase':
