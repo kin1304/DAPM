@@ -1,7 +1,5 @@
-from base64 import encode
-
-import pandas as pd
 import numpy as np
+
 class TwoPhase:
     def __init__(self, data, threshold=30):
         if isinstance(data, dict):
@@ -12,9 +10,11 @@ class TwoPhase:
             except (TypeError, ValueError):
                 raise ValueError("Data không thể chuyển đổi thành từ điển.")
         self.threshold = threshold
+        self.fit()
 
     def fit(self):
-        pass
+        first_three = dict(list(self.data.items())[:3])
+        print(first_three)
 
     def run(self):
         pass

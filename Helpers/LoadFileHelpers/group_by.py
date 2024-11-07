@@ -8,6 +8,7 @@ import numpy as np
 def group_by(data: pd.DataFrame, problem=""):
     df = pd.DataFrame({})
     if not pd.DataFrame(data).empty:
+        data = pd.DataFrame(data)
         columns = list(data.columns)
         if 'user' not in columns and 'transaction' not in columns:
             pass
@@ -49,12 +50,12 @@ def group_by(data: pd.DataFrame, problem=""):
                                          pd.notnull(details)}
                     merged_data[user] = user_transactions
 
-        return merged_data
+        return merged_data, name_mapping_dict
 
     return pd.DataFrame({})
 
 
 def main(data: pd.DataFrame, problem="") -> pd.DataFrame:
-    dataframe = group_by(data, problem)
-    st.dataframe(dataframe, width=1400, height=300)
-    return dataframe
+    dataframe, items_dict = group_by(data, problem)
+    # st.dataframe(dataframe, width=1400, height=300)
+    return dataframe, items_dict

@@ -6,7 +6,7 @@ import time
 #from TwoPhase import TwoPhase
 from Helpers.LoadFileHelpers import load_file as lf
 from Helpers.LoadFileHelpers import group_by as gr
-from Helpers.AlgorithmHelpers import TwoPhase
+from Helpers.AlgorithmHelpers import TwoPhase, USpan
 
 st.title('Ứng dụng Trực quan hóa Dữ liệu')
 problem_group = st.selectbox('Chọn nhóm bài toán', ['High-Utilities Itemsets', 'High-Utilities Sequential'])
@@ -29,9 +29,9 @@ elif choose_tof == 'Excel':
 
 if not pd.DataFrame(data).empty:
     if problem_group == 'High-Utilities Itemsets':
-        data = gr.main(data, problem='HUI')
+        data, items_dict = gr.main(data, problem='HUI')
     if problem_group == 'High-Utilities Sequential':
-        data = gr.main(data, problem='HUS')
+        data, items_dict = gr.main(data, problem='HUS')
 
 # Bước 2: Chọn các thuật toán cần chạy
 if selected_algorithm == 'Two-Phase':
@@ -40,8 +40,8 @@ if selected_algorithm == 'Two-Phase':
 #     algorithm_instance = HUIMiner()
 # elif selected_algorithm == 'EFIM':
 #     algorithm_instance = EFIM()
-# elif selected_algorithm == 'USpan':
-#     algorithm_instance = USpan()
+elif selected_algorithm == 'USpan':
+     algorithm_instance = USpan()
 # elif selected_algorithm == 'HUS-Span':
 #     algorithm_instance = HUSSpan()
 # elif selected_algorithm == 'PrefixSpan':
