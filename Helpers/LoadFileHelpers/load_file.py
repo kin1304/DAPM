@@ -42,7 +42,7 @@ def load_file_csv_txt() -> pd.DataFrame:
             st.write("Xem trước dữ liệu:")
             st.dataframe(df, width=1400, height=300)
             df_after = fill_column(df)
-            st.write("Dữ liệu sau khi chọn cột:")
+            st.write("Dữ liệu sau khi mã hóa và chọn lọc:")
             st.dataframe(df_after, width=1400, height=300)
             return df_after
         except pd.errors.ParserError as e:
@@ -52,16 +52,32 @@ def load_file_csv_txt() -> pd.DataFrame:
 
 def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
     try:
+        name = dataframe['name'].drop_duplicates()
+        dict = {}
+        re_dict = {}
+        i = 1
+        for n in name:
+            dict[i] = [n]
+            re_dict[n] = [i]
+            i += 1
+        data_name = dataframe['name'].copy()
+        for ind in range(len(data_name)):
+            data_name[ind] = re_dict[data_name[ind]][0]
+
         data = pd.DataFrame()
-        data['name'] = dataframe['name']
+        data['name'] = data_name.astype(str) + ' '
         data['utilities'] = (dataframe['quantity'] * dataframe['price']).astype(str)
         data['utilities'] = data['utilities'] + ' '
         data['user'] = dataframe['user'].astype(str)
         data['transaction'] = dataframe['transaction'].astype(str)
         data['user'] = data['user'] + ' '
         data['transaction'] = data['transaction'] + ' '
+        df = pd.DataFrame(dict)
+        df.to_csv('dict.csv', index=False)
+        df = pd.DataFrame(re_dict)
+        df.to_csv('redict.csv', index=False)
         return data
     except Exception as e:
         print(e)
+        st.write(e)
         return pd.DataFrame({})
-
