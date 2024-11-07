@@ -52,7 +52,7 @@ def load_file_csv_txt() -> pd.DataFrame:
 
 def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
     try:
-        name = dataframe['name'].drop_duplicates()
+        name = dataframe['name']
         dict = {}
         re_dict = {}
         i = 1

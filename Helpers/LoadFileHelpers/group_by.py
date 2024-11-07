@@ -1,46 +1,32 @@
-
-from statistics import median_grouped
-
 import pandas as pd
-import streamlit as st
 import numpy as np
 
 
-def group_by(data: pd.DataFrame, problem=""):
-    df = pd.DataFrame({})
+def group_by(data: pd.DataFrame, problem: str) -> dict:
     if not pd.DataFrame(data).empty:
         data = pd.DataFrame(data)
-
+        merged_data = {}
         columns = list(data.columns)
         if 'user' not in columns and 'transaction' not in columns:
             pass
         else:
-            # mã hóa name
-            data['name_encoded'] = data['name'].astype('category').cat.codes
-            name_mapping = dict(enumerate(data['name'].astype('category').cat.categories))
-            # từ điển lưu trữ
-            name_mapping_dict = {v: k for k, v in name_mapping.items()}
-            # st.dataframe(data,  width=1400, height=300)
-
-            merged_data = {}
-            if (problem == 'HUI'):
-
-                grouped_encoded_names = data.groupby('transaction')['name_encoded'].apply(lambda x: np.array(x)).to_dict()
+            if problem == 'HUI':
+                grouped_encoded_names = data.groupby('transaction')['name'].apply(lambda x: np.array(x)).to_dict()
                 grouped_utilities = data.groupby('transaction')['utilities'].apply(lambda x: np.array(x)).to_dict()
 
                 merged_data = {
                     transaction_id: {
-                        "encoded_names": grouped_encoded_names[transaction_id],
+                        "names": grouped_encoded_names[transaction_id],
                         "utilities": grouped_utilities[transaction_id]
                     }
                     for transaction_id in grouped_encoded_names.keys()
                 }
 
-            else: #problem == 'HUS'
+            else:  #problem == 'HUS'
                 grouped_data = (
                     data.groupby(['user', 'transaction'])
                     .apply(lambda x: {
-                        "encoded_names": np.array(x['name_encoded']),
+                        "names": np.array(x['name']),
                         "utilities": np.array(x['utilities'])
                     })
                     .unstack(level=0)
@@ -52,13 +38,11 @@ def group_by(data: pd.DataFrame, problem=""):
                                          pd.notnull(details)}
                     merged_data[user] = user_transactions
 
-        return merged_data, name_mapping_dict
+        return merged_data
+    return {}
 
-    return pd.DataFrame({})
 
-
-def main(data: pd.DataFrame, problem="") -> pd.DataFrame:
-    dataframe, items_dict = group_by(data, problem)
+def main(data: pd.DataFrame, problem: str) -> dict:
+    data = group_by(data, problem)
     # st.dataframe(dataframe, width=1400, height=300)
-    return dataframe, items_dict
-
+    return data
