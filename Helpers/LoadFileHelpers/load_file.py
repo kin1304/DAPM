@@ -43,8 +43,13 @@ def load_file_csv_txt() -> pd.DataFrame:
             st.write("Xem trước dữ liệu:")
             st.dataframe(df, width=1400, height=300)
             df_after = fill_column(df)
+<<<<<<< Updated upstream
             st.write("Xem trước dữ liệu:")
             st.dataframe(df_after, width=1400, height=300)
+=======
+            #st.write("Dữ liệu sau khi chọn cột:")
+            #st.dataframe(df_after, width=1400, height=300)
+>>>>>>> Stashed changes
             return df_after
         except pd.errors.ParserError as e:
             st.markdown("<span style='color:red'>Chọn dấu ngăn không phù hợp</span>", unsafe_allow_html=True)

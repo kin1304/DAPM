@@ -1,12 +1,25 @@
+from base64 import encode
+
 import pandas as pd
 import numpy as np
+<<<<<<< Updated upstream
 import itertools
 from collections import defaultdict
+=======
+import re
+>>>>>>> Stashed changes
 
 class TwoPhase:
-    def __init__(self, df, threshold=30):
-        self.df = pd.DataFrame(data=df)
+    def __init__(self, data, threshold=30):
+        if isinstance(data, dict):
+            self.data = data
+        else:
+            try:
+                self.data = dict(data)
+            except (TypeError, ValueError):
+                raise ValueError("Data không thể chuyển đổi thành từ điển.")
         self.threshold = threshold
+<<<<<<< Updated upstream
         self.items, self.utilities = self.fit()
 
     def fit(self):
@@ -39,3 +52,9 @@ class TwoPhase:
     def run(self):
         print(self.items)
         print(self.utilities)
+=======
+        self.dict = {}
+
+    def run(self):
+        print(self.data[:5])
+>>>>>>> Stashed changes
