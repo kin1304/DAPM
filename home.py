@@ -1,21 +1,23 @@
-import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import io
+import streamlit as st
 import time
-#from TwoPhase import TwoPhase
+
+from Helpers.AlgorithmHelpers.TwoPhase import TwoPhase
 from Helpers.LoadFileHelpers import load_file as lf
 from Helpers.LoadFileHelpers import group_by as gr
 from Helpers.AlgorithmHelpers import TwoPhase, USpan
 
 st.title('Ứng dụng Trực quan hóa Dữ liệu')
+
 problem_group = st.selectbox('Chọn nhóm bài toán', ['High-Utilities Itemsets', 'High-Utilities Sequential'])
 
 # Bổ sung combobox để chọn thuật toán tương ứng với nhóm bài toán đã chọn
+selected_algorithm = ""
 if problem_group == 'High-Utilities Itemsets':
     selected_algorithm = st.selectbox('Chọn một thuật toán để chạy', ['Two-Phase', 'HUI-Miner', 'EFIM'])
 elif problem_group == 'High-Utilities Sequential':
     selected_algorithm = st.selectbox('Chọn một thuật toán để chạy', ['USpan', 'HUS-Span', 'PrefixSpan'])
+
 
 threshold = st.number_input("Nhập giá trị hữu ích bạn muốn khai thác: ", value=30)
 
@@ -33,6 +35,7 @@ if not pd.DataFrame(data).empty:
     if problem_group == 'High-Utilities Sequential':
         data, items_dict = gr.main(data, problem='HUS')
 
+
 # Bước 2: Chọn các thuật toán cần chạy
 if selected_algorithm == 'Two-Phase':
     algorithm_instance = TwoPhase(data, threshold=threshold)
@@ -49,7 +52,7 @@ elif selected_algorithm == 'USpan':
 
 placeholder = st.empty()
 high_utility_itemsets = []
-if (len(high_utility_itemsets) == 0):
+if len(high_utility_itemsets) == 0:
     if algorithm_instance:
         placeholder.write("Đang chạy thuật toán...")
         high_utility_itemsets = algorithm_instance.run()

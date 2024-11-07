@@ -39,84 +39,45 @@ def load_file_csv_txt() -> pd.DataFrame:
                 df = pd.read_csv(uploaded_file, delimiter=choose_delimiter, header=None)
             else:
                 df = pd.read_csv(uploaded_file, delimiter=choose_delimiter)
-
             st.write("Xem trước dữ liệu:")
             st.dataframe(df, width=1400, height=300)
             df_after = fill_column(df)
-            #st.write("Dữ liệu sau khi chọn cột:")
-            #st.dataframe(df_after, width=1400, height=300)
+            st.write("Dữ liệu sau khi mã hóa và chọn lọc:")
+            st.dataframe(df_after, width=1400, height=300)
             return df_after
         except pd.errors.ParserError as e:
             st.markdown("<span style='color:red'>Chọn dấu ngăn không phù hợp</span>", unsafe_allow_html=True)
+            return pd.DataFrame({})
 
 
 def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
-    items = ""
-    utilities = ""
-    quantities = ""
-    unit_price = ""
-    user = ""
-    transaction = ""
-    total_utilities = ""
-    df = pd.DataFrame({})
-    if not dataframe.empty:
-        columns = [""] + list(dataframe.columns)
-        if len(columns) > 0:
-            items = st.selectbox("Chọn cột chứa tên của các sản phẩm", columns, placeholder=" ")
-            if items == "":
-                pass
-            else:
-                columns.remove(items)
-        if len(columns) > 0:
-            utilities = st.selectbox("Chen cột chứa hữu ích của sản phẩm", columns, placeholder=" ")
-            if utilities == "":
-                pass
-            else:
-                columns.remove(utilities)
-        if len(columns) > 0:
-            total_utilities = st.selectbox("Chọn cột chứa tổng hữu ích của đơn hàng", columns, placeholder=" ")
-            if total_utilities == "":
-                pass
-            else:
-                columns.remove(total_utilities)
-        if len(columns) > 0:
-            quantities = st.selectbox("Chọn cột cứa số lượng của sản phẩm", columns, placeholder=" ")
-            if quantities == "":
-                pass
-            else:
-                columns.remove(quantities)
-        if len(columns) > 0:
-            unit_price = st.selectbox("Chọn cột chứa đơn giá của sản phẩm", columns, placeholder=" ")
-            if unit_price == "":
-                pass
-            else:
-                columns.remove(unit_price)
-        if len(columns) > 0:
-            user = st.selectbox("Chọn cột chứa mã người dùng", columns, placeholder=" ")
-            if user == "":
-                pass
-            else:
-                columns.remove(user)
-        if len(columns) > 0:
-            transaction = st.selectbox("Chọn cột chứa mã hóa đơn", columns, placeholder=" ")
-            if transaction == "":
-                pass
-            else:
-                columns.remove(transaction)
+    try:
+        name = dataframe['name'].drop_duplicates()
+        dict = {}
+        re_dict = {}
+        i = 1
+        for n in name:
+            dict[i] = [n]
+            re_dict[n] = [i]
+            i += 1
+        data_name = dataframe['name'].copy()
+        for ind in range(len(data_name)):
+            data_name[ind] = re_dict[data_name[ind]][0]
 
-
-        if (items != "" and utilities != "") or (items != "" and quantities != "" and unit_price != "" and user != "" and transaction != ""):
-            df["items"] = dataframe[items]
-            if utilities != "":
-                df["utilities"] = dataframe[utilities]
-            if quantities != "":
-                df["quantities"] = dataframe[quantities]
-            if unit_price != "":
-                df["unit_price"] = dataframe[unit_price]
-            if user != "":
-                df["user"] = dataframe[user]
-            if transaction != "":
-                df["transaction"] = dataframe[transaction]
-        else:
-            st.write("Dữ liệu không phù hợps")
-    return df
+        data = pd.DataFrame()
+        data['name'] = data_name.astype(str) + ' '
+        data['utilities'] = (dataframe['quantity'] * dataframe['price']).astype(str)
+        data['utilities'] = data['utilities'] + ' '
+        data['user'] = dataframe['user'].astype(str)
+        data['transaction'] = dataframe['transaction'].astype(str)
+        data['user'] = data['user'] + ' '
+        data['transaction'] = data['transaction'] + ' '
+        df = pd.DataFrame(dict)
+        df.to_csv('dict.csv', index=False)
+        df = pd.DataFrame(re_dict)
+        df.to_csv('redict.csv', index=False)
+        return data
+    except Exception as e:
+        print(e)
+        st.write(e)
+        return pd.DataFrame({})

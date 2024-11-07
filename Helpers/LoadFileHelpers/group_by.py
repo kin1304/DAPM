@@ -1,3 +1,4 @@
+
 from statistics import median_grouped
 
 import pandas as pd
@@ -9,6 +10,7 @@ def group_by(data: pd.DataFrame, problem=""):
     df = pd.DataFrame({})
     if not pd.DataFrame(data).empty:
         data = pd.DataFrame(data)
+
         columns = list(data.columns)
         if 'user' not in columns and 'transaction' not in columns:
             pass
@@ -59,3 +61,4 @@ def main(data: pd.DataFrame, problem="") -> pd.DataFrame:
     dataframe, items_dict = group_by(data, problem)
     # st.dataframe(dataframe, width=1400, height=300)
     return dataframe, items_dict
+
