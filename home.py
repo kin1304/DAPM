@@ -5,22 +5,10 @@ import time
 from Helpers.AlgorithmHelpers.TwoPhase import TwoPhase
 from Helpers.LoadFileHelpers import load_file as lf
 from Helpers.LoadFileHelpers import group_by as gr
+from Helpers.AlgorithmHelpers import TwoPhase, USpan
 
 st.title('Ứng dụng Trực quan hóa Dữ liệu')
 
-# Bước 1: Tải lên tệp
-choose_tof = st.radio("Chọn định dạng file tải lên", ('TXT hoặc CSV', 'Excel'))
-data = pd.DataFrame()
-if choose_tof == 'TXT hoặc CSV':
-    data = lf.load_file_csv_txt()
-elif choose_tof == 'Excel':
-    data = lf.load_file_excel()
-
-
-if not pd.DataFrame(data).empty:
-    data = gr.main(data)
-
-# Bổ sung combobox để chọn nhóm bài toán
 problem_group = st.selectbox('Chọn nhóm bài toán', ['High-Utilities Itemsets', 'High-Utilities Sequential'])
 
 # Bổ sung combobox để chọn thuật toán tương ứng với nhóm bài toán đã chọn
@@ -31,18 +19,32 @@ elif problem_group == 'High-Utilities Sequential':
     selected_algorithm = st.selectbox('Chọn một thuật toán để chạy', ['USpan', 'HUS-Span', 'PrefixSpan'])
 
 
-st.write(f'Nhóm bài toán đã chọn: {problem_group}')
-st.write(f'Thuật toán đã chọn: {selected_algorithm}')
+threshold = st.number_input("Nhập giá trị hữu ích bạn muốn khai thác: ", value=30)
+
+# Bước 1: Tải lên tệp
+choose_tof = st.radio("Chọn định dạng file tải lên", ('TXT hoặc CSV', 'Excel'))
+data = pd.DataFrame()
+if choose_tof == 'TXT hoặc CSV':
+    data = lf.load_file_csv_txt()
+elif choose_tof == 'Excel':
+    data = lf.load_file_excel()
+
+if not pd.DataFrame(data).empty:
+    if problem_group == 'High-Utilities Itemsets':
+        data, items_dict = gr.main(data, problem='HUI')
+    if problem_group == 'High-Utilities Sequential':
+        data, items_dict = gr.main(data, problem='HUS')
+
 
 # Bước 2: Chọn các thuật toán cần chạy
 if selected_algorithm == 'Two-Phase':
-    algorithm_instance = TwoPhase.TwoPhase(data)
+    algorithm_instance = TwoPhase(data, threshold=threshold)
 # elif selected_algorithm == 'HUI-Miner':
 #     algorithm_instance = HUIMiner()
 # elif selected_algorithm == 'EFIM':
 #     algorithm_instance = EFIM()
-# elif selected_algorithm == 'USpan':
-#     algorithm_instance = USpan()
+elif selected_algorithm == 'USpan':
+     algorithm_instance = USpan()
 # elif selected_algorithm == 'HUS-Span':
 #     algorithm_instance = HUSSpan()
 # elif selected_algorithm == 'PrefixSpan':
