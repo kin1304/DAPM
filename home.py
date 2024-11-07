@@ -23,7 +23,7 @@ threshold = st.number_input("Nhập giá trị hữu ích bạn muốn khai thá
 
 # Bước 1: Tải lên tệp
 choose_tof = st.radio("Chọn định dạng file tải lên", ('TXT hoặc CSV', 'Excel'))
-data = pd.DataFrame()
+data = {}
 if choose_tof == 'TXT hoặc CSV':
     data = lf.load_file_csv_txt()
 elif choose_tof == 'Excel':
@@ -35,6 +35,8 @@ if not pd.DataFrame(data).empty:
     if problem_group == 'High-Utilities Sequential':
         data = gr.main(data, problem='HUS')
 
+st.write("sau khi group_by")
+st.dataframe(pd.DataFrame(data).head())
 
 # Bước 2: Chọn các thuật toán cần chạy
 if selected_algorithm == 'Two-Phase':
