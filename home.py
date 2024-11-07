@@ -31,14 +31,14 @@ elif choose_tof == 'Excel':
 
 if not pd.DataFrame(data).empty:
     if problem_group == 'High-Utilities Itemsets':
-        data, items_dict = gr.main(data, problem='HUI')
+        data = gr.main(data, problem='HUI')
     if problem_group == 'High-Utilities Sequential':
-        data, items_dict = gr.main(data, problem='HUS')
+        data = gr.main(data, problem='HUS')
 
 
 # Bước 2: Chọn các thuật toán cần chạy
 if selected_algorithm == 'Two-Phase':
-    algorithm_instance = TwoPhase(data, threshold=threshold)
+    algorithm_instance = TwoPhase.TwoPhase(data, threshold=threshold)
 # elif selected_algorithm == 'HUI-Miner':
 #     algorithm_instance = HUIMiner()
 # elif selected_algorithm == 'EFIM':
