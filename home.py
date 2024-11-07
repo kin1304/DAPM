@@ -40,7 +40,7 @@ st.dataframe(pd.DataFrame(data).head())
 
 # Bước 2: Chọn các thuật toán cần chạy
 if selected_algorithm == 'Two-Phase':
-    algorithm_instance = TwoPhase(data, threshold=threshold)
+    algorithm_instance = TwoPhase.TwoPhase(data, threshold=threshold)
 # elif selected_algorithm == 'HUI-Miner':
 #     algorithm_instance = HUIMiner()
 # elif selected_algorithm == 'EFIM':

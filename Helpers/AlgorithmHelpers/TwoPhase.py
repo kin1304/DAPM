@@ -1,20 +1,15 @@
 import numpy as np
+import streamlit as st
+import Helpers.AlgorithmHelpers.read_dict as rd
 
 class TwoPhase:
-    def __init__(self, data, threshold=30):
-        if isinstance(data, dict):
-            self.data = data
-        else:
-            try:
-                self.data = dict(data)
-            except (TypeError, ValueError):
-                raise ValueError("Data không thể chuyển đổi thành từ điển.")
+    def __init__(self, data:dict, threshold=30):
+        self.data = data
+        self.names, self.utilities = rd.read(self.data)
         self.threshold = threshold
-        self.fit()
+        st.write(self.names[:5])
+        st.write(self.utilities[:5])
 
-    def fit(self):
-        first_three = dict(list(self.data.items())[:3])
-        print(first_three)
 
     def run(self):
         pass
