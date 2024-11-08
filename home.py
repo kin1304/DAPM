@@ -6,6 +6,7 @@ from Helpers.AlgorithmHelpers.TwoPhase import TwoPhase
 from Helpers.LoadFileHelpers import load_file as lf
 from Helpers.LoadFileHelpers import group_by as gr
 from Helpers.AlgorithmHelpers import TwoPhase, USpan
+from Helpers.AlgorithmHelpers import HUI_MinerClass
 
 st.title('Ứng dụng Trực quan hóa Dữ liệu')
 
@@ -18,8 +19,7 @@ if problem_group == 'High-Utilities Itemsets':
 elif problem_group == 'High-Utilities Sequential':
     selected_algorithm = st.selectbox('Chọn một thuật toán để chạy', ['USpan', 'HUS-Span', 'PrefixSpan'])
 
-
-threshold = st.number_input("Nhập giá trị hữu ích bạn muốn khai thác: ", value=30)
+min_threshold = st.number_input("Nhập giá trị hữu ích bạn muốn khai thác: ", value=1, min_value=1, key="0")
 
 # Bước 1: Tải lên tệp
 choose_tof = st.radio("Chọn định dạng file tải lên", ('TXT hoặc CSV', 'Excel'))
@@ -38,33 +38,38 @@ if not pd.DataFrame(data).empty:
 st.write("sau khi group_by")
 st.dataframe(pd.DataFrame(data).head())
 
+
+algorithm_instance = HUI_MinerClass.HUI_Miner(data, min_threshold)
 # Bước 2: Chọn các thuật toán cần chạy
 if selected_algorithm == 'Two-Phase':
-    algorithm_instance = TwoPhase.TwoPhase(data, threshold=threshold)
-# elif selected_algorithm == 'HUI-Miner':
-#     algorithm_instance = HUIMiner()
+    algorithm_instance = TwoPhase.TwoPhase(data, min_threshold)
+elif selected_algorithm == 'HUI-Miner':
+    algorithm_instance = HUI_MinerClass.HUI_Miner(data, min_threshold)
 # elif selected_algorithm == 'EFIM':
 #     algorithm_instance = EFIM()
 elif selected_algorithm == 'USpan':
-     algorithm_instance = USpan()
+    algorithm_instance = USpan()
 # elif selected_algorithm == 'HUS-Span':
 #     algorithm_instance = HUSSpan()
 # elif selected_algorithm == 'PrefixSpan':
 #     algorithm_instance = PrefixSpan()
 
 placeholder = st.empty()
+threshold = st.number_input("Nhập giá trị hữu ích bạn muốn khai thác: ", value=algorithm_instance.min_threshold, min_value=algorithm_instance.min_threshold, key="1")
 high_utility_itemsets = []
 if len(high_utility_itemsets) == 0:
     if algorithm_instance:
         placeholder.write("Đang chạy thuật toán...")
-        high_utility_itemsets = algorithm_instance.run()
+        high_utility_itemsets = algorithm_instance.run(threshold)
         time.sleep(5)
 
 if high_utility_itemsets:
     placeholder.write("Kết quả các tập mẫu tiện ích cao:")
-    for itemset, support, utility in high_utility_itemsets:
-        itemset_str = ' '.join(map(str, itemset))
-        st.write(f"{itemset_str} #SUP: {support:.1f} #UTIL: {utility}")
+    for high_utility_itemset in high_utility_itemsets:
+        st.write(high_utility_itemset)
+    # for itemset, support, utility in high_utility_itemsets:
+    #     itemset_str = ' '.join(map(str, itemset))
+    #     st.write(f"{itemset_str} #SUP: {support:.1f} #UTIL: {utility}")
 else:
     st.write("Không tìm thấy tập mẫu tiện ích cao nào.")
 
