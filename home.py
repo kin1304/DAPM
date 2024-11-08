@@ -7,6 +7,7 @@ from Helpers.LoadFileHelpers import load_file as lf
 from Helpers.LoadFileHelpers import group_by as gr
 from Helpers.AlgorithmHelpers import TwoPhase, USpan
 from Helpers.AlgorithmHelpers import HUI_MinerClass
+from Helpers import PlotHelpers as ph
 
 st.title('Ứng dụng Trực quan hóa Dữ liệu')
 
@@ -65,11 +66,10 @@ if len(high_utility_itemsets) == 0:
 
 if high_utility_itemsets:
     placeholder.write("Kết quả các tập mẫu tiện ích cao:")
-    for high_utility_itemset in high_utility_itemsets:
-        st.write(high_utility_itemset)
-    # for itemset, support, utility in high_utility_itemsets:
-    #     itemset_str = ' '.join(map(str, itemset))
-    #     st.write(f"{itemset_str} #SUP: {support:.1f} #UTIL: {utility}")
+    for itemset, support, utility in high_utility_itemsets:
+        itemset_str = ' '.join(map(str, itemset))
+        st.write(f"{itemset_str} #SUP: {support:.1f} #UTIL: {utility}")
+    ph.plot_algo(high_utility_itemsets)
 else:
     st.write("Không tìm thấy tập mẫu tiện ích cao nào.")
 
