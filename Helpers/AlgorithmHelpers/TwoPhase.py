@@ -7,8 +7,8 @@ import Helpers.AlgorithmHelpers.read_dict as rd
 
 
 class TwoPhase:
-    def __init__(self, data:dict, threshold=30):
-        self.threshold = threshold
+    def __init__(self, data:dict, min_threshold):
+        self.min_threshold = min_threshold
         self.data = data
         self.names, self.utilities = rd.read(self.data)
         self.names = [name.tolist() if isinstance(name, np.ndarray) else name for name in self.names]
@@ -70,6 +70,6 @@ class TwoPhase:
 
         return high_utility_itemsets
 
-    def run(self):
-        return self.twophase(self.transactions, self.threshold)
+    def run(self, threshold):
+        return self.twophase(self.transactions, min_utility=threshold)
 
