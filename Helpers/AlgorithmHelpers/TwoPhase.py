@@ -5,6 +5,7 @@ from collections import defaultdict
 
 import Helpers.AlgorithmHelpers.read_dict as rd
 
+
 class TwoPhase:
     def __init__(self, data:dict, threshold=30):
         self.threshold = threshold
@@ -15,6 +16,7 @@ class TwoPhase:
         self.sum_utilities = [np.sum(transaction_utilities) for transaction_utilities in self.utilities]
         self.transactions = [(name, sum_util, util) for name, sum_util, util in
                                  zip(self.names, self.sum_utilities, self.utilities)]
+
 
     # Tính toán TWU - Trọng số Tiện ích Giao Dịch
     def calculate_twu(self, transactions):
@@ -70,3 +72,4 @@ class TwoPhase:
 
     def run(self):
         return self.twophase(self.transactions, self.threshold)
+

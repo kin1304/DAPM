@@ -38,9 +38,10 @@ class HUI_Miner:
         self.transactions = transactions
         self.min_threshold = min_threshold
         self.names, self.utilities = rd.read(transactions)
-        self.first_version = self.filter_candidates(min_threshold)
+        self.first_version_item, self.frequence = self.filter_candidates(min_threshold)
 
-    def find_candidate(self) -> dict:
+    def find_candidate(self):
+        dict_frequence = {}
         dict_candidates = {}
         for index in range(len(self.names)):
             trans = make_dict(list(self.names[index]), list(self.utilities[index]))
@@ -52,22 +53,24 @@ class HUI_Miner:
                     string += str(item) + " "
                 total_utilities = calculate_utilities(trans, subitems_sorted)
                 dict_candidates[string] = dict_candidates.get(string, 0) + total_utilities
-        return dict_candidates
+                dict_frequence[string] = dict_frequence.get(string, 0) + 1
+        return dict_candidates, dict_frequence
 
-    def filter_candidates(self, threshold) -> list:
-        dict_candidates = self.find_candidate()
+    def filter_candidates(self, threshold):
+        dict_candidates, frequence = self.find_candidate()
         candidates = []
         for idx, (key, value) in enumerate(dict_candidates.items()):
             if value == " ":
                 pass
             elif float(value) >= threshold:
                 candidates.append([key, value])
-        return candidates
+        return candidates, frequence
 
     def run(self, threshold) -> list:
         candidates = []
-        for fv in self.first_version:
+        for fv in self.first_version_item:
             if fv[1] >= threshold:
                 data = rn.read_data(fv[0])
-                candidates.append(data + [fv[1]])
+                tmp = [data, self.frequence[fv[0]]/len(self.transactions), fv[1]]
+                candidates.append(tmp)
         return candidates
