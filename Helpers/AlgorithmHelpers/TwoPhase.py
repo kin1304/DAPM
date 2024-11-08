@@ -10,12 +10,13 @@ class TwoPhase:
         self.threshold = threshold
         self.data = data
         self.names, self.utilities = rd.read(self.data)
-        self.sum_utilities = np.array([np.sum(transaction_utilities) for transaction_utilities in self.utilities])
-        self.transactions = []
-        for na, sum_util, util in zip(self.names, self.sum_utilities, self.utilities):
-            self.transactions.append((na, sum_util, util))
+        self.names = [name.tolist() if isinstance(name, np.ndarray) else name for name in self.names]
+        self.utilities = [utility.tolist() if isinstance(utility, np.ndarray) else utility for utility in self.utilities]
+        self.sum_utilities = [np.sum(transaction_utilities) for transaction_utilities in self.utilities]
+        self.transactions = [(name, sum_util, util) for name, sum_util, util in
+                                 zip(self.names, self.sum_utilities, self.utilities)]
 
-    # Tính toán TWU (Trọng số Tiện ích Giao Dịch)
+    # Tính toán TWU - Trọng số Tiện ích Giao Dịch
     def calculate_twu(self, transactions):
         item_twu = defaultdict(int)
         for items, total_utility, _ in transactions:
@@ -23,7 +24,7 @@ class TwoPhase:
                 item_twu[item] += total_utility
         return item_twu
 
-    # Tạo các tập ứng viên từ các tập có kích thước nhỏ hơn
+    # Tạo các tập có kích thước lớn từ các tập có kích thước nhỏ hơn
     def generate_candidates(self, itemsets, length):
         return list(itertools.combinations(itemsets, length))
 
@@ -35,13 +36,11 @@ class TwoPhase:
             if set(itemset).issubset(set(items)):
                 support_count += 1
                 for item in itemset:
-                    item_index = np.where(items == item)[0]
-                    if len(item_index) > 0:  # Nếu tìm thấy chỉ số
-                        utility += utilities[item_index[0]]
-        support = support_count / len(self.transactions)
+                    utility += utilities[items.index(item)]
+        support = support_count / len(transactions)
         return support, utility
 
-    # Lọc các ứng viên có tiện ích >= minUtility
+    # Lọc các ứng viên có ultility < minUtility
     def filter_candidates(self, candidates, min_utility, transactions):
         high_utility_itemsets = []
         for itemset in candidates:
@@ -50,24 +49,24 @@ class TwoPhase:
                 high_utility_itemsets.append((itemset, support, utility))
         return high_utility_itemsets
 
-    # Chạy thuật toán Two-Phase
-    def run(self):
-        # Tính TWU cho mỗi item và lọc các item ban đầu
-        item_twu = self.calculate_twu(self.transactions)
-        initial_candidates = [item for item in item_twu if item_twu[item] >= self.threshold]
+    # Thuật toán two-phase
+    def twophase(self, transactions, min_utility):
+        item_twu = self.calculate_twu(transactions)
+        initial_candidates = [item for item in item_twu if item_twu[item] >= min_utility]
 
         high_utility_itemsets = []
 
-        # Bắt đầu với các tập ứng viên có kích thước là 1
+        # tạo các tập ứng viên với kích thước là 1
         k = 1
         current_candidates = [(item,) for item in initial_candidates]
 
-        # Tạo các tập ứng viên có kích thước lớn dần
+        # Tạo sinh các tập ứng viên với kích thước lớn dần
         while current_candidates:
-            high_utility_itemsets.extend(self.filter_candidates(current_candidates, self.threshold, self.transactions))
+            high_utility_itemsets.extend(self.filter_candidates(current_candidates, min_utility, transactions))
             k += 1
-            if k <= 4:
-                current_candidates = self.generate_candidates(initial_candidates, k)
+            current_candidates = self.generate_candidates(initial_candidates, k)
 
         return high_utility_itemsets
 
+    def run(self):
+        return self.twophase(self.transactions, self.threshold)
