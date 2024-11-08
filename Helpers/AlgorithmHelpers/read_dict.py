@@ -1,12 +1,19 @@
+from typing import Any
 import numpy as np
+import pandas as pd
+from numpy import ndarray, dtype
 
-def read(data: dict):
-    # Tạo mảng răng cưa với các số nguyên cho names và số thực cho utilities
-    all_names = [np.array(transaction["names"], dtype=int) for transaction in data.values()]
-    all_utilities = [np.array(transaction["utilities"], dtype=float) for transaction in data.values()]
 
-    # Chuyển đổi thành các mảng răng cưa (số transaction x số name trong mỗi transaction)
-    names_array = np.array(all_names, dtype=object)
-    utilities_array = np.array(all_utilities, dtype=object)
-
+def read(data: dict) -> tuple[ndarray[Any, dtype[Any]], ndarray[Any, dtype[Any]]]:
+    names = []
+    utilities = []
+    for key, value in data.items():
+        df = pd.DataFrame(value)
+        df["utilities"] = df["utilities"].astype(float)
+        df = df.groupby("names", as_index=False).sum()
+        names.append(df["names"].values)
+        utilities.append(df["utilities"].values)
+    # Chuyển đổi thành các mảng đa chiều (số transaction x số name trong mỗi transaction)
+    names_array = np.array(names, dtype=object)
+    utilities_array = np.array(utilities, dtype=object)
     return names_array, utilities_array

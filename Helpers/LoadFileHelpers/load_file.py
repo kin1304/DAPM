@@ -52,7 +52,7 @@ def load_file_csv_txt() -> pd.DataFrame:
 
 def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
     try:
-        name = dataframe['name']
+        name = dataframe['name'].drop_duplicates()
         dict = {}
         re_dict = {}
         i = 1
@@ -63,7 +63,6 @@ def fill_column(dataframe: pd.DataFrame) -> pd.DataFrame:
         data_name = dataframe['name'].copy()
         for ind in range(len(data_name)):
             data_name[ind] = re_dict[data_name[ind]][0]
-
         data = pd.DataFrame()
         data['name'] = data_name.astype(str) + ' '
         data['utilities'] = (dataframe['quantity'] * dataframe['price']).astype(str)
