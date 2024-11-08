@@ -13,7 +13,6 @@ def group_by(data: pd.DataFrame, problem: str) -> dict:
             if problem == 'HUI':
                 grouped_encoded_names = data.groupby('transaction')['name'].apply(lambda x: np.array(x)).to_dict()
                 grouped_utilities = data.groupby('transaction')['utilities'].apply(lambda x: np.array(x)).to_dict()
-
                 merged_data = {
                     transaction_id: {
                         "names": grouped_encoded_names[transaction_id],
@@ -37,7 +36,6 @@ def group_by(data: pd.DataFrame, problem: str) -> dict:
                     user_transactions = {transaction: details for transaction, details in transactions.items() if
                                          pd.notnull(details)}
                     merged_data[user] = user_transactions
-
         return merged_data
     return {}
 
