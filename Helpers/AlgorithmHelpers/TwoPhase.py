@@ -48,7 +48,7 @@ class TwoPhase:
         for itemset in candidates:
             support, utility = self.calculate_utility(itemset, transactions)
             if utility >= min_utility:
-                high_utility_itemsets.append((itemset, support, utility))
+                high_utility_itemsets.append([itemset, support, utility])
         return high_utility_itemsets
 
     # Thuật toán two-phase
