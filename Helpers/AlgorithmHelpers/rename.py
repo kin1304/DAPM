@@ -11,5 +11,4 @@ def read_data(subitems: str) -> list:
             pass
         else:
             names.append(d[a][0])
-    print(d['1'])
     return names
