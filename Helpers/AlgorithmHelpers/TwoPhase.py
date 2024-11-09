@@ -2,6 +2,7 @@ import numpy as np
 import streamlit as st
 import itertools
 from collections import defaultdict
+import Helpers.AlgorithmHelpers.rename as rn
 
 import Helpers.AlgorithmHelpers.read_dict as rd
 
@@ -71,5 +72,11 @@ class TwoPhase:
         return high_utility_itemsets
 
     def run(self, threshold):
-        return self.twophase(self.transactions, min_utility=threshold)
+        high_utility_itemsets = self.twophase(self.transactions, threshold)
+        for item in high_utility_itemsets:
+            string = " ".join(item[0])
+            #st.write(type(item[0]))
+            convert = rn.read_data(string)
+            item[0] = convert
+        return high_utility_itemsets
 
