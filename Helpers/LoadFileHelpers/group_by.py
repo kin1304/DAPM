@@ -22,20 +22,34 @@ def group_by(data: pd.DataFrame, problem: str) -> dict:
                 }
 
             else:  #problem == 'HUS'
-                grouped_data = (
-                    data.groupby(['user', 'transaction'])
-                    .apply(lambda x: {
-                        "names": np.array(x['name']),
-                        "utilities": np.array(x['utilities'])
-                    })
-                    .unstack(level=0)
-                    .to_dict()
-                )
+                grouped_data = data.groupby('user').agg({
+                    'name': list,
+                    'utilities': list,
+                    'transaction': list
+                }).reset_index()
 
-                for user, transactions in grouped_data.items():
-                    user_transactions = {transaction: details for transaction, details in transactions.items() if
-                                         pd.notnull(details)}
-                    merged_data[user] = user_transactions
+                # Function to group each row by 'transaction' so that 'name' and 'utilities' entries with the same 'transaction' are combined into lists
+                def group_by_transaction(row):
+                    # Create a dictionary where the keys are unique transactions and values are lists for names and utilities
+                    grouped = {}
+                    for name, utility, transaction in zip(row['name'], row['utilities'], row['transaction']):
+                        if transaction not in grouped:
+                            grouped[transaction] = {'name': [], 'utilities': []}
+                        grouped[transaction]['name'].append(name)
+                        grouped[transaction]['utilities'].append(utility)
+
+                    # Extract the grouped names and utilities as lists and also the transaction keys as a list
+                    transactions = list(grouped.keys())
+                    names = [grouped[t]['name'] for t in transactions]
+                    utilities = [grouped[t]['utilities'] for t in transactions]
+
+                    return pd.Series([names, utilities, transactions])
+
+                # Apply the grouping function to each row in the DataFrame
+                grouped_data[['name', 'utilities', 'transaction']] = grouped_data.apply(group_by_transaction, axis=1)
+
+                # Drop the 'transaction' and 'user' columns as requested
+                merged_data = grouped_data.drop(columns=['transaction', 'user'])
         return merged_data
     return {}
 
