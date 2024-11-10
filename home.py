@@ -48,7 +48,7 @@ elif selected_algorithm == 'HUI-Miner':
 # elif selected_algorithm == 'EFIM':
 #     algorithm_instance = EFIM()
 elif selected_algorithm == 'USpan':
-    algorithm_instance = USpan()
+    algorithm_instance = USpan.USpan(data, min_threshold)
 # elif selected_algorithm == 'HUS-Span':
 #     algorithm_instance = HUSSpan()
 # elif selected_algorithm == 'PrefixSpan':
@@ -73,13 +73,6 @@ if high_utility_itemsets:
 else:
     st.write("Không tìm thấy tập mẫu tiện ích cao nào.")
 
-# Bước 3: Vẽ biểu đồ scatter
-# fig, ax = plt.subplots()
-# ax.scatter(df[x_column], df[y_column])
-# ax.set_xlabel(x_column)
-# ax.set_ylabel(y_column)
-# ax.set_title(f'Biểu đồ Scatter của {y_column} so với {x_column}')
-# st.pyplot(fig)
 
 # Bước 4: Xuất kết quả
 output_format = st.radio("Chọn định dạng xuất", ('CSV', 'Excel'))
